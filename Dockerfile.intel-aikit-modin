@@ -19,7 +19,7 @@ ENV PYTHON_VERSION=3.7 \
     LANG=en_US.UTF-8 \
     PIP_NO_CACHE_DIR=off \
     APP_ROOT=/opt/app-root \
-    CONDA_ROOT=/opt/anaconda3
+    CONDA_ROOT=/opt/miniconda3
 
 # RHEL7 base images automatically set these envvars to run scl_enable. RHEl8
 # images, however, don't as most images don't need SCLs any more. But we want
@@ -42,25 +42,28 @@ LABEL summary="$SUMMARY" \
       io.k8s.description="$DESCRIPTION" \
       io.k8s.display-name="Anaconda Python 3.7" \
       io.openshift.expose-services="8080:http" \
-      io.openshift.tags="builder,python,python37,python-37,anaconda-python37" \
+      io.openshift.tags="builder,python,python37,python-37,miniconda3" \
       com.redhat.component="python-37-container" \
-      name="ubi8/anaconda-37" \
+      name="ubi8/miniconda3" \
       version="1" \
       usage="" \
       maintainer="Probably Anaconda"
 
-RUN INSTALL_PKGS="nss_wrapper \
-        httpd httpd-devel mod_ssl mod_auth_gssapi mod_ldap \
-        mod_session atlas-devel gcc-gfortran libffi-devel libtool-ltdl enchant" && \
-    curl https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh > Anaconda3-2020.11-Linux-x86_64.sh && \
-    chmod +x Anaconda3-2020.11-Linux-x86_64.sh && \
-    ./Anaconda3-2020.11-Linux-x86_64.sh -b -p ${CONDA_ROOT} && \
-    rm ./Anaconda3-2020.11-Linux-x86_64.sh && \
-    yum -y module enable httpd:2.4 && \
+RUN yum -y module enable httpd:2.4 && \
+    INSTALL_PKGS="atlas-devel \
+    enchant \
+    gcc-gfortran \
+    httpd \
+    httpd-devel \
+    libffi-devel \
+    libtool-ltdl \
+    mod_auth_gssapi \
+    mod_ldap \
+    mod_session \
+    mod_ssl \
+    nss_wrapper" && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
-    # Remove redhat-logos-httpd (httpd dependency) to keep image size smaller.
-    rpm -e --nodeps redhat-logos-httpd && \
     yum -y clean all --enablerepo='*'
 
 # TODO(Spryor): What extra files exactly...?
@@ -73,6 +76,13 @@ RUN INSTALL_PKGS="nss_wrapper \
 # - In order to drop the root user, we have to make some directories world
 #   writable as OpenShift default security model is to run the container
 #   under random UID.
+
+ARG CONDA_VERSION=py37_4.9.2
+RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh > Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
+    chmod +x Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
+    ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -b -p ${CONDA_ROOT} && \
+    rm ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
+
 RUN \
     ${CONDA_ROOT}/bin/conda create -y --prefix ${APP_ROOT} python=${PYTHON_VERSION} && \
     ${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel -c conda-forge intel-aikit-modin && \

@@ -19,7 +19,7 @@ ENV PYTHON_VERSION=3.7 \
     LANG=en_US.UTF-8 \
     PIP_NO_CACHE_DIR=off \
     APP_ROOT=/opt/app-root \
-    CONDA_ROOT=/opt/anaconda3
+    CONDA_ROOT=/opt/miniconda3
 
 # Intel TensorFlow specific Envs
 ENV KMP_AFFINITY=KMP_AFFINITY=\'granularity="fine,verbose,compact,1,0"\' \
@@ -47,9 +47,9 @@ LABEL summary="$SUMMARY" \
       io.k8s.description="$DESCRIPTION" \
       io.k8s.display-name="Anaconda Python 3.7" \
       io.openshift.expose-services="8080:http" \
-      io.openshift.tags="builder,python,python37,python-37,anaconda-python37" \
+      io.openshift.tags="builder,python,python37,python-37,miniconda3" \
       com.redhat.component="python-37-container" \
-      name="ubi8/anaconda-37" \
+      name="ubi8/miniconda3" \
       version="1" \
       usage="" \
       maintainer="Probably Anaconda"
@@ -82,10 +82,11 @@ RUN yum -y module enable httpd:2.4 && \
 #   writable as OpenShift default security model is to run the container
 #   under random UID.
 
-RUN curl https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh > Anaconda3-2020.11-Linux-x86_64.sh && \
-    chmod +x Anaconda3-2020.11-Linux-x86_64.sh && \
-    ./Anaconda3-2020.11-Linux-x86_64.sh -b -p ${CONDA_ROOT} && \
-    rm ./Anaconda3-2020.11-Linux-x86_64.sh
+ARG CONDA_VERSION=py37_4.9.2
+RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh > Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
+    chmod +x Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
+    ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -b -p ${CONDA_ROOT} && \
+    rm ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
 
 RUN \
     ${CONDA_ROOT}/bin/conda create -y --prefix ${APP_ROOT} python=${PYTHON_VERSION} && \
