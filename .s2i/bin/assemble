@@ -29,6 +29,10 @@ rm -rf /tmp/requirements.txt
 
 ${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} pip setuptools wheel
 
+# Install nodejs because it's needed to build jupyterlab
+
+${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge nodejs
+
 # Install pipenv for jupyter-nbrequirements to use
 # TODO: This should be removed once nbrequirements can use Thoth + micropipenv only
 # ${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge pipenv>=2020.11.15
