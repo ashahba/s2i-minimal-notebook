@@ -110,7 +110,9 @@ RUN /tmp/scripts/assemble
 
 RUN ${CONDA_ROOT}/bin/conda clean -y --all
 
-RUN ${CONDA_ROOT}/bin/conda config --set auto_activate_base false
+#RUN ${CONDA_ROOT}/bin/conda config --set auto_activate_base false
+RUN ${CONDA_ROOT}/bin/conda install ipykernel
+RUN ipython kernel install --name base --user
 
 USER 1001
 
