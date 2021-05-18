@@ -91,24 +91,10 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x
 
 COPY . /tmp/src
 
-ARG CONDA_ENV=conda
-RUN ${CONDA_ROOT}/bin/conda env create --prefix ${APP_ROOT} -f /tmp/src/environment.yml
-#RUN ${CONDA_ROOT}/bin/conda create -y --prefix ${APP_ROOT} python=${PYTHON_VERSION} ipykernel
-RUN ${APP_ROOT}/bin/python -m ipykernel install --prefix=${APP_ROOT} --name ${CONDA_ENV} --display-name "Python AI Kit (Base)"
-RUN chown -R 1001:0 ${APP_ROOT} && \
-    fix-permissions ${APP_ROOT} -P && \
-    rpm-file-permissions
-
-RUN rm -rf /tmp/src/.git* && \
-    chown -R 1001 /tmp/src && \
-    chgrp -R 0 /tmp/src && \
-    chmod -R g+w /tmp/src && \
-    rm -rf /tmp/scripts && \
-    mv /tmp/src/.s2i/bin /tmp/scripts
-
+RUN time ${CONDA_ROOT}/bin/conda env create --prefix ${APP_ROOT} -f /tmp/src/environment.yml
+RUN time ${APP_ROOT}/bin/python -m ipykernel install --prefix=${APP_ROOT} --name conda --display-name "Python AI Kit (Base)"
 RUN /tmp/scripts/assemble
-
-RUN ${CONDA_ROOT}/bin/conda clean -y --all
+RUN time ${CONDA_ROOT}/bin/conda clean -y --all
 
 USER 1001
 
