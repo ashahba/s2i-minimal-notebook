@@ -1,4 +1,3 @@
-name: /opt/app-root
 channels:
   - intel
   - conda-forge
