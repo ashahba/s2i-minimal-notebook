@@ -92,7 +92,7 @@ RUN \
     ${CONDA_ROOT}/bin/conda create -y --prefix ${APP_ROOT} python=${PYTHON_VERSION} && \
     ${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel intel-aikit-pytorch intel-aikit-tensorflow && \
     ${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} ipykernel && \
-    ipython kernel install --name base --user && \
+    ${APP_ROOT}/bin/ipython kernel install --name base --user --display-name conda && \
     # ${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel -c conda-forge intel-aikit-modin && \
     chown -R 1001:0 ${APP_ROOT} && \
     fix-permissions ${APP_ROOT} -P && \
