@@ -83,14 +83,16 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x
     ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -b -p ${CONDA_ROOT} && \
     rm ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
 
-RUN \
-    ${CONDA_ROOT}/bin/conda create -y --prefix ${APP_ROOT} python=${PYTHON_VERSION} && \
-    chown -R 1001:0 ${APP_ROOT} && \
-    fix-permissions ${APP_ROOT} -P && \
-    fix-permissions ${CONDA_ROOT} -P && \
-    rpm-file-permissions
+#RUN \
+#    ${CONDA_ROOT}/bin/conda create -y --prefix ${APP_ROOT} python=${PYTHON_VERSION} && \
+#    chown -R 1001:0 ${APP_ROOT} && \
+#    fix-permissions ${APP_ROOT} -P && \
+#    fix-permissions ${CONDA_ROOT} -P && \
+#    rpm-file-permissions
 
 COPY . /tmp/src
+
+RUN ${CONDA_ROOT}/bin/conda env create -f /tmp/src/environment.yml
 
 RUN rm -rf /tmp/src/.git* && \
     chown -R 1001 /tmp/src && \

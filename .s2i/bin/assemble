@@ -27,14 +27,14 @@ rm -rf /tmp/requirements.txt
 
 # Ensure we are using the latest pip and wheel packages.
 
-${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} pip setuptools wheel
+#${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} pip setuptools wheel
 
 # Install intel packages
-${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel intel-aikit-pytorch intel-aikit-tensorflow
+#${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel intel-aikit-pytorch intel-aikit-tensorflow
 
 # Install nodejs because it's needed to build jupyterlab
 
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge nodejs
+#${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge nodejs
 
 # Install pipenv for jupyter-nbrequirements to use
 # TODO: This should be removed once nbrequirements can use Thoth + micropipenv only
@@ -42,15 +42,15 @@ ${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge nodejs
 
 # Install mod_wsgi for use in optional webdav support.
 
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge 'mod_wsgi>=4.6.8'
+#${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge 'mod_wsgi>=4.6.8'
 
 # Install supervisord for managing multiple applications.
 
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} 'supervisor>=4.1.0'
+#${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} 'supervisor>=4.1.0'
 
 # Install base packages needed for running Jupyter Notebooks.
 
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} --file /tmp/src/requirements.txt
+#${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} --file /tmp/src/requirements.txt
 
 npm cache clean --force
 
@@ -127,7 +127,7 @@ EOF
 
 # Install and enable default nbextensions
 
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge jupyter_contrib_nbextensions
+#${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge jupyter_contrib_nbextensions
 
 jupyter contrib nbextension install --sys-prefix
 
@@ -136,7 +136,7 @@ jupyter nbextension enable  --sys-prefix publish
 
 # Enable the extensions configurator
 
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge jupyter_nbextensions_configurator
+#${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge jupyter_nbextensions_configurator
 
 jupyter nbextensions_configurator enable --sys-prefix
 

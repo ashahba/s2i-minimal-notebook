@@ -35,9 +35,9 @@ ENV KMP_AFFINITY=KMP_AFFINITY=\'granularity="fine,verbose,compact,1,0"\' \
 #    PROMPT_COMMAND=". ${APP_ROOT}/etc/scl_enable"
 
 # Ensure we're enabling Anaconda by forcing the activation script in the shell
-ENV BASH_ENV="${CONDA_ROOT}/bin/activate ${APP_ROOT}" \
-    ENV="${CONDA_ROOT}/bin/activate ${APP_ROOT}" \
-    PROMPT_COMMAND=". ${CONDA_ROOT}/bin/activate ${APP_ROOT}"
+#ENV BASH_ENV="${CONDA_ROOT}/bin/activate ${APP_ROOT}" \
+#    ENV="${CONDA_ROOT}/bin/activate ${APP_ROOT}" \
+#    PROMPT_COMMAND=". ${CONDA_ROOT}/bin/activate ${APP_ROOT}"
 
 ENV SUMMARY="" \
     DESCRIPTION=""
@@ -58,6 +58,7 @@ RUN yum -y module enable httpd:2.4 && \
     INSTALL_PKGS="atlas-devel \
     enchant \
     gcc-gfortran \
+    git \
     httpd \
     httpd-devel \
     libffi-devel \
@@ -111,13 +112,13 @@ RUN ${CONDA_ROOT}/bin/conda clean -y --all
 USER 1001
 
 # Clone Intel Model Zoo
-RUN mkdir ${APP_ROOT}/models && \
-    cd ${APP_ROOT}/models && \
-    curl -sSL --retry 5 https://github.com/IntelAI/models/tarball/HEAD | tar --strip-components=1 -xzf - && \
-    mkdir /tmp/intel-aikit-examples && \
-    cd /tmp/intel-aikit-examples && \
-    curl -sSL --retry 5 https://github.com/preethivenkatesh/oneAPI-samples/tarball/HEAD | tar --strip-components=1 -xzf - && \
-    mv AI-and-Analytics/RHODS-e2e ${APP_ROOT}/intel-aikit-examples && \
-    rm -rf /tmp/intel-aikit-examples
+#RUN mkdir ${APP_ROOT}/models && \
+#    cd ${APP_ROOT}/models && \
+#    curl -sSL --retry 5 https://github.com/IntelAI/models/tarball/HEAD | tar --strip-components=1 -xzf - && \
+#    mkdir /tmp/intel-aikit-examples && \
+#    cd /tmp/intel-aikit-examples && \
+#    curl -sSL --retry 5 https://github.com/preethivenkatesh/oneAPI-samples/tarball/HEAD | tar --strip-components=1 -xzf - && \
+#    mv AI-and-Analytics/RHODS-e2e ${APP_ROOT}/intel-aikit-examples && \
+#    rm -rf /tmp/intel-aikit-examples
 
 CMD [ "/opt/app-root/builder/run" ]
