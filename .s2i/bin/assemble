@@ -27,7 +27,10 @@ rm -rf /tmp/requirements.txt
 
 # Ensure we are using the latest pip and wheel packages.
 
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} pip setuptools wheel
+${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} pip setuptools wheel
+
+# Install intel packages
+${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel intel-aikit-pytorch intel-aikit-tensorflow
 
 # Install nodejs because it's needed to build jupyterlab
 
