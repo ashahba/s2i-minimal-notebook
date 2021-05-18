@@ -91,7 +91,7 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x
 ARG CONDA_ENV=conda
 RUN ${CONDA_ROOT}/bin/conda create -y --prefix ${APP_ROOT} python=${PYTHON_VERSION} python ipykernel
 #RUN ${CONDA_ROOT}/bin/conda install -y -n ${CONDA_ENV} -c intel intel-aikit-pytorch intel-aikit-tensorflow
-RUN ${APP_ROOT}/bin/python -m ipykernel install --user --prefix=${APP_ROOT} --name ${CONDA_ENV} --display-name "Python (${CONDA_ENV})"
+RUN ${APP_ROOT}/bin/python -m ipykernel install --prefix=${APP_ROOT} --name ${CONDA_ENV} --display-name "Python (${CONDA_ENV})"
 RUN chown -R 1001:0 ${APP_ROOT} && \
     fix-permissions ${APP_ROOT} -P && \
     fix-permissions ${CONDA_ROOT} -P && \
