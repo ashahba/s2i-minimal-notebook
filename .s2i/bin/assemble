@@ -4,8 +4,8 @@ set -x
 
 set -eo pipefail
 
-APP_ROOT=${APP_ROOT:-/opt/app-root/src}
-CONDA_ROOT=${CONDA_ROOT:-/opt/miniconda3}
+APP_ROOT=${APP_ROOT:-/opt/app-root}
+CONDA_ROOT=${CONDA_ROOT:-${APP_ROOT}/miniconda3}
 
 # TODO: For now we don't need to run this but eventually if that's needed we need to do the follwoing:
 # mkdir -p /usr/libexec/s2i
