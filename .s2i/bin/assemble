@@ -6,20 +6,6 @@ set -eo pipefail
 APP_ROOT=${APP_ROOT:-/opt/app-root}
 CONDA_ROOT=${CONDA_ROOT:-${APP_ROOT}/miniconda3}
 
-rm -rf /tmp/src/.git*
-rm -rf /tmp/Pipfile.lock
-rm -rf /tmp/requirements.txt
-rm -rf $HOME/.cache/yarn
-rm -rf $HOME/.node-gyp
-rm -rf /tmp/scripts
-mv /tmp/src/.s2i/bin /tmp/scripts
-chown -R 1001:0 ${APP_ROOT}
-fix-permissions ${APP_ROOT} -P
-rpm-file-permissions
-chown -R 1001 /tmp/src
-chgrp -R 0 /tmp/src
-chmod -R g+w /tmp/src
-
 npm cache clean --force
 
 mv /tmp/src/jupyter_notebook_config.py ${APP_ROOT}/etc/

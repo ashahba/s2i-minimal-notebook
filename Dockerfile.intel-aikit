@@ -93,6 +93,21 @@ COPY . /tmp/src
 
 RUN ${CONDA_ROOT}/bin/conda env create --prefix ${APP_ROOT} -f /tmp/src/environment.yml
 RUN ${APP_ROOT}/bin/python -m ipykernel install --prefix=${APP_ROOT} --name conda --display-name "Python AI Kit (Base)"
+
+RUN rm -rf /tmp/src/.git* && \
+  rm -rf /tmp/Pipfile.lock && \
+  rm -rf /tmp/requirements.txt && \
+  rm -rf $HOME/.cache/yarn && \
+  rm -rf $HOME/.node-gyp && \
+  rm -rf /tmp/scripts && \
+  mv /tmp/src/.s2i/bin /tmp/scripts && \
+  chown -R 1001:0 ${APP_ROOT} && \
+  fix-permissions ${APP_ROOT} -P && \
+  rpm-file-permissions && \
+  chown -R 1001 /tmp/src && \
+  chgrp -R 0 /tmp/src && \
+  chmod -R g+w /tmp/src
+
 RUN /tmp/scripts/assemble
 RUN ${CONDA_ROOT}/bin/conda clean -y --all
 
