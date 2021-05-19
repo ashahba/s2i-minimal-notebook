@@ -84,10 +84,9 @@ RUN yum -y module enable httpd:2.4 && \
 #   under random UID.
 
 ARG CONDA_VERSION=py37_4.9.2
-RUN mkdir ${CONDA_ROOT} && chmod ug+s ${CONDA_ROOT}
 RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh > Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     chmod +x Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
-    ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -b -p ${CONDA_ROOT} && \
+    ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -u -b -p ${CONDA_ROOT} && \
     rm ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
 
 COPY . /tmp/src
