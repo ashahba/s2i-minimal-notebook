@@ -12,14 +12,14 @@ EXPOSE 8080
 
 # TODO(Spryor): ensure these are right, add Anaconda versions
 ENV PYTHON_VERSION=3.7 \
-    PATH=$HOME/.local/bin/:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=UTF-8 \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     PIP_NO_CACHE_DIR=off \
     APP_ROOT=/opt/app-root \
-    CONDA_ROOT=${APP_ROOT}/miniconda3
+    CONDA_ROOT=${APP_ROOT}/miniconda3 \
+    PATH=.:$HOME/.local/bin/:${CONDA_ROOT}/bin:$PATH
 
 # Intel TensorFlow specific Envs
 ENV KMP_AFFINITY=KMP_AFFINITY=\'granularity="fine,verbose,compact,1,0"\' \
@@ -84,30 +84,16 @@ RUN yum -y module enable httpd:2.4 && \
 #   under random UID.
 
 ARG CONDA_VERSION=py37_4.9.2
+RUN mkdir ${CONDA_ROOT} && chmod ug+s ${CONDA_ROOT}
 RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh > Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     chmod +x Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh -b -p ${CONDA_ROOT} && \
     rm ./Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh
 
 COPY . /tmp/src
-
+RUN  mv /tmp/src/.s2i/bin /tmp/scripts
 RUN ${CONDA_ROOT}/bin/conda env create --prefix ${APP_ROOT} -f /tmp/src/environment.yml
 RUN ${APP_ROOT}/bin/python -m ipykernel install --prefix=${APP_ROOT} --name conda --display-name "Python AI Kit (Base)"
-
-RUN rm -rf /tmp/src/.git* && \
-  rm -rf /tmp/Pipfile.lock && \
-  rm -rf /tmp/requirements.txt && \
-  rm -rf $HOME/.cache/yarn && \
-  rm -rf $HOME/.node-gyp && \
-  rm -rf /tmp/scripts && \
-  mv /tmp/src/.s2i/bin /tmp/scripts && \
-  chown -R 1001:0 ${APP_ROOT} && \
-  fix-permissions ${APP_ROOT} -P && \
-  rpm-file-permissions && \
-  chown -R 1001 /tmp/src && \
-  chgrp -R 0 /tmp/src && \
-  chmod -R g+w /tmp/src
-
 RUN /tmp/scripts/assemble
 RUN ${CONDA_ROOT}/bin/conda clean -y --all
 
