@@ -6,19 +6,19 @@ set -eo pipefail
 APP_ROOT=${APP_ROOT:-/opt/app-root}
 CONDA_ROOT=${CONDA_ROOT:-${APP_ROOT}/miniconda3}
 
-time rm -rf /tmp/src/.git*
-time rm -rf /tmp/Pipfile.lock
-time rm -rf /tmp/requirements.txt
-time rm -rf $HOME/.cache/yarn
-time rm -rf $HOME/.node-gyp
-time rm -rf /tmp/scripts
-time mv /tmp/src/.s2i/bin /tmp/scripts
-time chown -R 1001:0 ${APP_ROOT}
-time fix-permissions ${APP_ROOT} -P
-time rpm-file-permissions
-time chown -R 1001 /tmp/src
-time chgrp -R 0 /tmp/src
-time chmod -R g+w /tmp/src
+rm -rf /tmp/src/.git*
+rm -rf /tmp/Pipfile.lock
+rm -rf /tmp/requirements.txt
+rm -rf $HOME/.cache/yarn
+rm -rf $HOME/.node-gyp
+rm -rf /tmp/scripts
+mv /tmp/src/.s2i/bin /tmp/scripts
+chown -R 1001:0 ${APP_ROOT}
+fix-permissions ${APP_ROOT} -P
+rpm-file-permissions
+chown -R 1001 /tmp/src
+chgrp -R 0 /tmp/src
+chmod -R g+w /tmp/src
 
 npm cache clean --force
 
@@ -108,4 +108,4 @@ fi
 
 # Fixup permissions on directories and files.
 
-#fix-permissions ${APP_ROOT} -P
+fix-permissions ${APP_ROOT}

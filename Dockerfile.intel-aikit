@@ -91,10 +91,10 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x
 
 COPY . /tmp/src
 
-RUN time ${CONDA_ROOT}/bin/conda env create --prefix ${APP_ROOT} -f /tmp/src/environment.yml
-RUN time ${APP_ROOT}/bin/python -m ipykernel install --prefix=${APP_ROOT} --name conda --display-name "Python AI Kit (Base)"
+RUN ${CONDA_ROOT}/bin/conda env create --prefix ${APP_ROOT} -f /tmp/src/environment.yml
+RUN ${APP_ROOT}/bin/python -m ipykernel install --prefix=${APP_ROOT} --name conda --display-name "Python AI Kit (Base)"
 RUN /tmp/scripts/assemble
-RUN time ${CONDA_ROOT}/bin/conda clean -y --all
+RUN ${CONDA_ROOT}/bin/conda clean -y --all
 
 USER 1001
 
