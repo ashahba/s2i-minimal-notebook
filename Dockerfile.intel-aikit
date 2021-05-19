@@ -57,21 +57,21 @@ LABEL summary="$SUMMARY" \
 RUN yum -y module enable httpd:2.4 && \
     INSTALL_PKGS="atlas-devel \
     enchant \
-    gcc-gfortran \
-    httpd \
-    httpd-devel \
-    httpd-mmn \
-    git \
-    libffi-devel \
     libgfortran \
     libquadmath \
+    system-logos-httpd \
+    gcc-gfortran \
+    httpd-mmn \
+    httpd \
+    httpd-devel \
+    git \
+    libffi-devel \
     libtool-ltdl \
     mod_auth_gssapi \
     mod_ldap \
     mod_session \
     mod_ssl \
-    nss_wrapper \
-    system-logos-httpd" && \
+    nss_wrapper" && \
     yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     yum -y clean all --enablerepo='*'
