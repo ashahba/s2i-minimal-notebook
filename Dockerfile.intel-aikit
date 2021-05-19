@@ -18,8 +18,8 @@ ENV PYTHON_VERSION=3.7 \
     LANG=en_US.UTF-8 \
     PIP_NO_CACHE_DIR=off \
     APP_ROOT=/opt/app-root \
-    CONDA_ROOT=${APP_ROOT}/miniconda3 \
-    PATH=.:$HOME/.local/bin/:${CONDA_ROOT}/bin:$PATH
+    CONDA_ROOT=/opt/app-root/miniconda3 \
+    PATH=.:$HOME/.local/bin/:/opt/app-root/miniconda3/bin:$PATH
 
 # Intel TensorFlow specific Envs
 ENV KMP_AFFINITY=KMP_AFFINITY=\'granularity="fine,verbose,compact,1,0"\' \
