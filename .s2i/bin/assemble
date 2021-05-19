@@ -1,60 +1,20 @@
 #!/bin/bash
 
 set -x
-
 set -eo pipefail
 
-APP_ROOT=${APP_ROOT:-/opt/app-root/src}
-CONDA_ROOT=${CONDA_ROOT:-/opt/miniconda3}
+APP_ROOT=${APP_ROOT:-/opt/app-root}
+CONDA_ROOT=${CONDA_ROOT:-${APP_ROOT}/miniconda3}
 
-# TODO: For now we don't need to run this but eventually if that's needed we need to do the follwoing:
-# mkdir -p /usr/libexec/s2i
-# curl https://raw.githubusercontent.com/thoth-station/s2i-thoth/master/assemble > /usr/libexec/s2i/assemble
-# chmod +x /usr/libexec/s2i/assemble
-# pip install thamos
+time rm -rf /tmp/src/.git* /tmp/Pipfile.lock /tmp/requirements.txt $HOME/.cache/yarn $HOME/.node-gyp /tmp/scripts
 
-# Run the original Python S2I assemble script to install packages.
-
-# /usr/libexec/s2i/assemble
-
-# Remove the cached package dependencies files generated from s2i assemble script.
-rm -rf /tmp/Pipfile.lock
-rm -rf /tmp/requirements.txt
-
-########################################################################
-# INFO: Install everything that's required for Jupyter notebooks here.
-########################################################################
-
-# Ensure we are using the latest pip and wheel packages.
-
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} pip setuptools wheel
-
-# Install nodejs because it's needed to build jupyterlab
-
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge nodejs
-
-# Install pipenv for jupyter-nbrequirements to use
-# TODO: This should be removed once nbrequirements can use Thoth + micropipenv only
-# ${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge pipenv>=2020.11.15
-
-# Install mod_wsgi for use in optional webdav support.
-
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge 'mod_wsgi>=4.6.8'
-
-# Install supervisord for managing multiple applications.
-
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} 'supervisor>=4.1.0'
-
-# Install base packages needed for running Jupyter Notebooks.
-
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} --file /tmp/src/requirements.txt
+time chown -R 1001:0 ${APP_ROOT}
+#  fix-permissions ${APP_ROOT} -P && \
+time rpm-file-permissions
+time chown -R 1001:0 /tmp/src
+time chmod -R g+w /tmp/src
 
 npm cache clean --force
-
-rm -rf $HOME/.cache/yarn
-rm -rf $HOME/.node-gyp
-
-# Copy into place default config files for Jupyter and Apache webdav.
 
 mv /tmp/src/jupyter_notebook_config.py ${APP_ROOT}/etc/
 mv /tmp/src/jupyter_kernel_gateway_config.py ${APP_ROOT}/etc/
@@ -69,17 +29,12 @@ mv /tmp/src/httpd-webdav.conf ${APP_ROOT}/etc/
 mkdir -p ${APP_ROOT}/.s2i
 
 mv /tmp/src/builder/image_metadata.json ${APP_ROOT}/.s2i/image_metadata.json
-
 mv /tmp/src/builder ${APP_ROOT}/builder
-
 mv /tmp/src/supervisor ${APP_ROOT}/etc/supervisor
-
 mv /tmp/src/gateway ${APP_ROOT}/gateway
-
 mv /tmp/src/*.sh ${APP_ROOT}/bin
 
 # Install oc command line client for OpenShift cluster.
-
 curl -s -o ${APP_ROOT}/oc.tar.gz https://mirror.openshift.com/pub/openshift-v3/clients/3.11.374/linux/oc.tar.gz && \
     tar -C ${APP_ROOT}/bin -zxf ${APP_ROOT}/oc.tar.gz oc && \
     mv ${APP_ROOT}/bin/oc ${APP_ROOT}/bin/oc-3.11 && \
@@ -122,21 +77,11 @@ cat >> ${APP_ROOT}/etc/supervisord.conf << EOF
 files = ${APP_ROOT}/etc/supervisor/*.conf
 EOF
 
-# Install and enable default nbextensions
-
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge jupyter_contrib_nbextensions
-
+# Enable default nbextensions, extensions configurator
 jupyter contrib nbextension install --sys-prefix
-
 jupyter nbextension install --sys-prefix https://raw.githubusercontent.com/vpavlin/jupyter-publish-extension/master/publish.js
 jupyter nbextension enable  --sys-prefix publish
-
-# Enable the extensions configurator
-
-${CONDA_ROOT}/bin/conda install --prefix ${APP_ROOT} -c conda-forge jupyter_nbextensions_configurator
-
 jupyter nbextensions_configurator enable --sys-prefix
-
 jupyter lab build
 
 # Apply custom notebook configuration
@@ -157,4 +102,4 @@ fi
 
 # Fixup permissions on directories and files.
 
-fix-permissions ${APP_ROOT}
+fix-permissions ${APP_ROOT} -P

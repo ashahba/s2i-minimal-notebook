@@ -92,6 +92,8 @@ RUN \
 
 COPY . /tmp/src
 
+RUN ${CONDA_ROOT}/bin/conda env create -f /tmp/src/environment.yml
+
 RUN rm -rf /tmp/src/.git* && \
     chown -R 1001 /tmp/src && \
     chgrp -R 0 /tmp/src && \
