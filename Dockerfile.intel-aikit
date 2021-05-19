@@ -68,7 +68,7 @@ RUN yum -y module enable httpd:2.4 && \
     mod_session \
     mod_ssl \
     nss_wrapper" && \
-    yum -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
+    yum -y --nobest --setopt=tsflags=nodocs install $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     yum -y clean all --enablerepo='*'
 
