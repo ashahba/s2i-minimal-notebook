@@ -19,7 +19,7 @@ ENV PYTHON_VERSION=3.7 \
     PIP_NO_CACHE_DIR=off \
     APP_ROOT=/opt/app-root \
     CONDA_ROOT=/opt/app-root/miniconda3 \
-    PATH=.:$HOME/.local/bin/:/opt/app-root/miniconda3/bin:$PATH
+    PATH=.:$HOME/.local/bin/:$PATH
 
 # Intel TensorFlow specific Envs
 ENV KMP_AFFINITY=KMP_AFFINITY=\'granularity="fine,verbose,compact,1,0"\' \
@@ -95,6 +95,8 @@ RUN ${CONDA_ROOT}/bin/conda env create --prefix ${APP_ROOT} -f /tmp/src/environm
 RUN ${APP_ROOT}/bin/python -m ipykernel install --prefix=${APP_ROOT} --name conda --display-name "Python AI Kit (Base)"
 RUN /tmp/scripts/assemble
 RUN ${CONDA_ROOT}/bin/conda clean -y --all
+
+ENV PATH=/opt/app-root/miniconda3/bin:$PATH
 
 USER 1001
 
