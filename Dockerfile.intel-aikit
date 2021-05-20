@@ -58,6 +58,7 @@ RUN yum -y module enable httpd:2.4 && \
     INSTALL_PKGS="atlas-devel \
     enchant \
     gcc-gfortran \
+    git \
     httpd \
     httpd-devel \
     libffi-devel \
