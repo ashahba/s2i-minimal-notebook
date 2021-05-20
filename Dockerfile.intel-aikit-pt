@@ -21,6 +21,11 @@ ENV PYTHON_VERSION=3.7 \
     APP_ROOT=/opt/app-root \
     CONDA_ROOT=/opt/miniconda3
 
+# Intel TensorFlow specific Envs
+ENV KMP_AFFINITY=KMP_AFFINITY=\'granularity="fine,verbose,compact,1,0"\' \
+    KMP_BLOCKTIME=1 \
+    KMP_SETTINGS=1
+
 # RHEL7 base images automatically set these envvars to run scl_enable. RHEl8
 # images, however, don't as most images don't need SCLs any more. But we want
 # to run it even on RHEL8, because we set the virtualenv environment as part of
@@ -103,6 +108,8 @@ RUN rm -rf /tmp/src/.git* && \
 RUN /tmp/scripts/assemble
 
 RUN ${CONDA_ROOT}/bin/conda clean -y --all
+
+RUN ${CONDA_ROOT}/bin/conda config --set auto_activate_base false
 
 USER 1001
 

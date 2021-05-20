@@ -21,6 +21,11 @@ ENV PYTHON_VERSION=3.7 \
     APP_ROOT=/opt/app-root \
     CONDA_ROOT=/opt/miniconda3
 
+# Intel TensorFlow specific Envs
+ENV KMP_AFFINITY=KMP_AFFINITY=\'granularity="fine,verbose,compact,1,0"\' \
+    KMP_BLOCKTIME=1 \
+    KMP_SETTINGS=1
+
 # RHEL7 base images automatically set these envvars to run scl_enable. RHEl8
 # images, however, don't as most images don't need SCLs any more. But we want
 # to run it even on RHEL8, because we set the virtualenv environment as part of
@@ -104,6 +109,16 @@ RUN /tmp/scripts/assemble
 
 RUN ${CONDA_ROOT}/bin/conda clean -y --all
 
+RUN ${CONDA_ROOT}/bin/conda config --set auto_activate_base false
+
 USER 1001
+
+# Clone Intel AI-Kit examples for Modin
+RUN mkdir /tmp/intel-aikit-examples && \
+    cd /tmp/intel-aikit-examples && \
+    curl -sSL --retry 5 https://github.com/preethivenkatesh/oneAPI-samples/tarball/HEAD | tar --strip-components=1 -xzf - && \
+    mv AI-and-Analytics/RHODS-e2e ${APP_ROOT}/src/intel-aikit-examples && \
+    rm -rf ${APP_ROOT}/src/intel-aikit-examples/E2E_use_case_with_Intel_optimized_Tensorflow_LPOT && \
+    rm -rf /tmp/intel-aikit-examples
 
 CMD [ "/opt/app-root/builder/run" ]

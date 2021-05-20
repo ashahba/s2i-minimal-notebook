@@ -109,11 +109,18 @@ RUN /tmp/scripts/assemble
 
 RUN ${CONDA_ROOT}/bin/conda clean -y --all
 
+RUN ${CONDA_ROOT}/bin/conda config --set auto_activate_base false
+
 USER 1001
 
-# Clone Intel Model Zoo
+# Clone Intel Model Zoo and Intel AI-Kit examples for TensorFlow
 RUN mkdir ${APP_ROOT}/src/models && \
     cd ${APP_ROOT}/src/models && \
-    curl -sSL --retry 5 https://github.com/IntelAI/models/tarball/HEAD | tar --strip-components=1 -xzf -
+    curl -sSL --retry 5 https://github.com/IntelAI/models/tarball/HEAD | tar --strip-components=1 -xzf - && \
+    mkdir /tmp/intel-aikit-examples && \
+    cd /tmp/intel-aikit-examples && \
+    curl -sSL --retry 5 https://github.com/preethivenkatesh/oneAPI-samples/tarball/HEAD | tar --strip-components=1 -xzf - && \
+    mv AI-and-Analytics/RHODS-e2e/E2E_use_case_with_Intel_optimized_Tensorflow_LPOT ${APP_ROOT}/src/intel-aikit-examples && \
+    rm -rf /tmp/intel-aikit-examples
 
 CMD [ "/opt/app-root/builder/run" ]

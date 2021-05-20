@@ -90,8 +90,8 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x
 
 RUN \
     ${CONDA_ROOT}/bin/conda create -y --prefix ${APP_ROOT} python=${PYTHON_VERSION} && \
+    ${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel -c conda-forge intel-aikit-modin && \
     ${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel intel-aikit-pytorch intel-aikit-tensorflow && \
-    # ${CONDA_ROOT}/bin/conda install -y --prefix ${APP_ROOT} -c intel -c conda-forge intel-aikit-modin && \
     chown -R 1001:0 ${APP_ROOT} && \
     fix-permissions ${APP_ROOT} -P && \
     fix-permissions ${CONDA_ROOT} -P && \
@@ -114,7 +114,7 @@ RUN ${CONDA_ROOT}/bin/conda config --set auto_activate_base false
 
 USER 1001
 
-# Clone Intel Model Zoo
+# Clone Intel Model Zoo and Intel AI-Kit examples
 RUN mkdir ${APP_ROOT}/src/models && \
     cd ${APP_ROOT}/src/models && \
     curl -sSL --retry 5 https://github.com/IntelAI/models/tarball/HEAD | tar --strip-components=1 -xzf - && \
